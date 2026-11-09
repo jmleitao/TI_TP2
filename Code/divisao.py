@@ -58,6 +58,33 @@ def copiar_registos(nomes, pasta_dataset, pasta_destino):
         for f in Path(pasta_dataset).glob(nome + '.*'):
             shutil.copy2(f, pasta_destino / f.name)
 
+def divisao():
+    base = Path(__file__).resolve().parent
+    ap = argparse.ArgumentParser(description=__doc__,
+                                 formatter_class=argparse.RawTextHelpFormatter)
+    ap.add_argument('--dataset', default=base.parent / 'Dataset')
+    ap.add_argument('--saida', default=base)
+    ap.add_argument('--semente', type=int, default=SEMENTE_DEFAULT)
+    ap.add_argument('--copiar', action='store_true',
+                    help='copiar os ficheiros para Dataset_split/')
+    args = ap.parse_args()
+
+    registos = listar_registos(args.dataset)
+    dev, teste = dividir(registos, args.semente)
+
+    saida = Path(args.saida)
+    saida.mkdir(parents=True, exist_ok=True)
+    escrever_lista(dev, saida / 'desenvolvimento.txt')
+    escrever_lista(teste, saida / 'teste.txt')
+
+    if args.copiar:
+        raiz = saida / 'Dataset_split'
+        copiar_registos(dev, args.dataset, raiz / 'desenvolvimento')
+        copiar_registos(teste, args.dataset, raiz / 'teste')
+
+    print(f'Total: {len(registos)} | desenvolvimento: {len(dev)} | '
+          f'teste: {len(teste)} | semente: {args.semente}')
+
 # --------------------------------------------------------------- entropia
 def contar(fonte, alfabeto):
     #posição de cada símbolo no alfabeto
@@ -90,31 +117,7 @@ def entropia(fonte, alfabeto):
 
 # ------------------------------------------------------------------- main
 def main():
-    base = Path(__file__).resolve().parent
-    ap = argparse.ArgumentParser(description=__doc__,
-                                 formatter_class=argparse.RawTextHelpFormatter)
-    ap.add_argument('--dataset', default=base.parent / 'Dataset')
-    ap.add_argument('--saida', default=base)
-    ap.add_argument('--semente', type=int, default=SEMENTE_DEFAULT)
-    ap.add_argument('--copiar', action='store_true',
-                    help='copiar os ficheiros para Dataset_split/')
-    args = ap.parse_args()
-
-    registos = listar_registos(args.dataset)
-    dev, teste = dividir(registos, args.semente)
-
-    saida = Path(args.saida)
-    saida.mkdir(parents=True, exist_ok=True)
-    escrever_lista(dev, saida / 'desenvolvimento.txt')
-    escrever_lista(teste, saida / 'teste.txt')
-
-    if args.copiar:
-        raiz = saida / 'Dataset_split'
-        copiar_registos(dev, args.dataset, raiz / 'desenvolvimento')
-        copiar_registos(teste, args.dataset, raiz / 'teste')
-
-    print(f'Total: {len(registos)} | desenvolvimento: {len(dev)} | '
-          f'teste: {len(teste)} | semente: {args.semente}')
+    divisao()
 
 
 if __name__ == '__main__':
