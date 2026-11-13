@@ -22,7 +22,7 @@ import numpy as np
 SEMENTE_DEFAULT = 42
 
 
-# ---------------------------------------------------------------- divisão
+#---------------------------------------------------------------- divisão
 def listar_registos(pasta_dataset):
     '''Nomes (sem extensão) de todos os registos com .dat, ordenados.'''
     registos = sorted(p.stem for p in Path(pasta_dataset).glob('*.dat'))
@@ -87,7 +87,7 @@ def divisao():
     return Path(args.dataset), dev, teste
 
 #---------------------------------------------------------------entropia
-def contar(fonte, alfabeto):
+def contar (fonte, alfabeto):
     #posição de cada símbolo no alfabeto
     indices = np.searchsorted(alfabeto, fonte)       
     
@@ -97,7 +97,7 @@ def contar(fonte, alfabeto):
         ocorrencias[i] += 1
 
     return ocorrencias
-
+  
 def criar_alfabeto(dados):
     info = np.iinfo(dados.dtype)
     return np.arange(info.min, info.max + 1)
@@ -116,7 +116,7 @@ def entropia(fonte, alfabeto):
 
     return entropia
 
-# ------------------------------------------------- leitura dos ficheiros .dat
+#------------------------------------------------- leitura dos ficheiros .dat
 def ler_registo(caminho):
     '''Lê um .dat em formato 212 (12 bits, 2 derivações intercaladas).
     Cada 3 bytes guardam 2 amostras (uma de cada derivação).
@@ -141,7 +141,7 @@ def carregar_dev(pasta_dataset, nomes_dev):
     '''Lista de (derivacao0, derivacao1), um tuplo por registo de desenvolvimento.'''
     return [ler_registo(Path(pasta_dataset) / (n + '.dat')) for n in nomes_dev]
 
-# ------------------------------------------------------ análise (só dev)
+#----------------------------------------------------- análise (só dev)
 def entropia_empirica(simbolos, miller_madow=False):
     '''Entropia (bits/símbolo) estimada pelas frequências observadas.
     Usa só os símbolos que aparecem (np.unique), por isso serve para
