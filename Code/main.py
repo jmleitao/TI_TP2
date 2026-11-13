@@ -59,7 +59,7 @@ def divisao():
     ap.add_argument('--dataset', default=base.parent / 'Dataset')
     ap.add_argument('--saida', default=base)
     ap.add_argument('--semente', type=int, default=SEMENTE_DEFAULT)
-    ap.add_argument('--copiar', required=True ,action='store_true',
+    ap.add_argument('--copiar',action='store_true',
                     help='copiar os ficheiros para Dataset_split/')
     args = ap.parse_args()
 
