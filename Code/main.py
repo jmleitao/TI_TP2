@@ -16,7 +16,7 @@ import numpy as np
 SEMENTE_DEFAULT = 42
 
 
-#---------------------------------------------------------------- divisão
+# ---------------------------------------------------------------- divisão
 def listar_registos(pasta_dataset):
     '''Nomes (sem extensão) de todos os registos com .dat, ordenados.'''
     registos = sorted(p.stem for p in Path(pasta_dataset).glob('*.dat'))
@@ -78,10 +78,11 @@ def divisao():
 
     print(f'Total: {len(registos)} | desenvolvimento: {len(dev)} | '
           f'teste: {len(teste)} | semente: {args.semente}')
-    return Path(args.dataset), dev, teste
 
-#---------------------------------------------------------------entropia
-def contar (fonte, alfabeto):
+    return dev, teste
+
+# --------------------------------------------------------------- entropia
+def contar(fonte, alfabeto):
     #posição de cada símbolo no alfabeto
     indices = np.searchsorted(alfabeto, fonte)       
     
@@ -91,7 +92,7 @@ def contar (fonte, alfabeto):
         ocorrencias[i] += 1
 
     return ocorrencias
-  
+
 def criar_alfabeto(dados):
     info = np.iinfo(dados.dtype)
     return np.arange(info.min, info.max + 1)
@@ -110,7 +111,7 @@ def entropia(fonte, alfabeto):
 
     return entropia
 
-#------------------------------------------------- leitura dos ficheiros .dat
+# ------------------------------------------------- leitura dos ficheiros .dat
 def ler_registo(caminho):
     '''Lê um .dat em formato 212 (12 bits, 2 derivações intercaladas).
     Cada 3 bytes guardam 2 amostras (uma de cada derivação).
@@ -135,32 +136,7 @@ def carregar_dev(pasta_dataset, nomes_dev):
     '''Lista de (derivacao0, derivacao1), um tuplo por registo de desenvolvimento.'''
     return [ler_registo(Path(pasta_dataset) / (n + '.dat')) for n in nomes_dev]
 
-#----------------------------------------------------- análise (só dev)
-def entropia_empirica(simbolos, miller_madow=False):
-    '''Entropia (bits/símbolo) estimada pelas frequências observadas.
-    Usa só os símbolos que aparecem (np.unique), por isso serve para
-    alfabetos enormes, como pares de amostras.
-    miller_madow=True soma a correção (K-1)/(2N ln2), que compensa a
-    subestimação quando há símbolos que aparecem poucas vezes.'''
-    _, contagens = np.unique(simbolos, return_counts=True)
-    N = contagens.sum()
-    p = contagens / N
-    H = -np.sum(p * np.log2(p))
-    if miller_madow:
-        H += (len(contagens) - 1) / (2 * N * np.log(2))
-    return H
-
-def entropia_condicional(anterior, atual, miller_madow=False):
-    '''H(X_n | X_{n-1}) = H(X_{n-1}, X_n) - H(X_{n-1}).
-    Com miller_madow=True corrige as duas parcelas.'''
-    conjunto = anterior.astype(np.int64) * 8192 + atual.astype(np.int64)
-    return (entropia_empirica(conjunto, miller_madow)
-            - entropia_empirica(anterior, miller_madow))
-
-def pares_consecutivos(x):
-    '''Pares sobrepostos: devolve (x[0..N-2], x[1..N-1]).'''
-    return x[:-1], x[1:]
-
+# ------------------------------------------------------ análise (só dev)
 def residuos(x, ordem):
     '''Erro de predição: ordem 0 = sinal original, 1 = x[n]-x[n-1],
     2 = x[n]-2x[n-1]+x[n-2] (aplica np.diff 'ordem' vezes).'''
@@ -193,15 +169,6 @@ def analise(pasta_dataset, nomes_dev):
         H_pares = entropia(pares, np.unique(pares)) / 2
         print(f'Pares de amostras: H(X1,X2)/2 = {H_pares:.4f} bits/amostra')
 
-        # 2b) Entropia condicional H(X_n | X_{n-1}) (pares sobrepostos,
-        #     por registo). Com e sem correção de Miller-Madow.
-        ant = np.concatenate([pares_consecutivos(r[d])[0] for r in registos])
-        atu = np.concatenate([pares_consecutivos(r[d])[1] for r in registos])
-        Hc = entropia_condicional(ant, atu)
-        Hc_mm = entropia_condicional(ant, atu, miller_madow=True)
-        print(f'H(X_n | X_n-1) = {Hc:.4f} bits/amostra  '
-              f'(com Miller-Madow: {Hc_mm:.4f})')
-
         # 3) Predição: entropia do erro de predição (por registo, sem
         #    misturar o fim de um registo com o início do seguinte)
         for ordem in (1, 2):
@@ -212,9 +179,11 @@ def analise(pasta_dataset, nomes_dev):
 
 # ------------------------------------------------------------------- main
 def main():
-    # a divisão (e os argumentos --dataset/--semente) vêm de divisao(),
-    # para a análise usar exatamente os mesmos conjuntos que foram escritos
-    pasta_dataset, dev, _ = divisao()
+    base = Path(__file__).resolve().parent
+    dev , teste = divisao()
+
+    # Reutiliza a mesma divisão (mesma semente) e analisa SÓ o desenvolvimento
+    pasta_dataset = base.parent / 'Dataset'
     analise(pasta_dataset, dev)
 
 if __name__ == '__main__': main()
