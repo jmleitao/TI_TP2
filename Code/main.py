@@ -79,7 +79,7 @@ def divisao():
     print(f'Total: {len(registos)} | desenvolvimento: {len(dev)} | '
           f'teste: {len(teste)} | semente: {args.semente}')
 
-    return dev, teste
+    return Path(args.dataset), dev, teste
 
 # --------------------------------------------------------------- entropia
 def contar(fonte, alfabeto):
@@ -179,11 +179,8 @@ def analise(pasta_dataset, nomes_dev):
 
 # ------------------------------------------------------------------- main
 def main():
-    base = Path(__file__).resolve().parent
-    dev , teste = divisao()
-
-    # Reutiliza a mesma divisão (mesma semente) e analisa SÓ o desenvolvimento
-    pasta_dataset = base.parent / 'Dataset'
+    #analisa SÓ o desenvolvimento, na mesma pasta usada na divisão
+    pasta_dataset, dev, _ = divisao()
     analise(pasta_dataset, dev)
 
 if __name__ == '__main__': main()
