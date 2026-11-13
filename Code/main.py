@@ -5,12 +5,6 @@ Dividir os registos do Dataset (168 registos ECG, ficheiros .dat) em:
 
 A divisão é aleatória e feita POR FICHEIRO (registo): cada registo pertence
 a um e só um dos conjuntos. Usa semente fixa para ser reproduzível.
-
-Uso:
-    python divisao.py                      # só escreve as listas
-    python divisao.py --copiar             # também copia os ficheiros para
-                                           # Dataset_split/desenvolvimento e /teste
-    python divisao.py --semente 7 --dataset ../Dataset --saida .
 '''
 import argparse
 import random
