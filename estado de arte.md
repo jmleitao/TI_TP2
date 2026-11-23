@@ -34,7 +34,7 @@ Quase todos os codecs têm dois estágios: um preditor que remove correlação t
 ## Aplicabilidade à vossa fonte
 
 | Abordagem | Adequação | Porquê |
-    |---|---|---|
+ | --- | --- | --- |
 | gzip / bzip2 / LZMA | Só *baseline* | Dicionários e blocos têm pouco com que trabalhar em 5120 amostras por derivação |
 | FLAC (WFDB 516) | *Baseline* forte | Predição linear mais Rice, já suportado pelo WFDB |
 | LP fixa ou adaptativa + Golomb-Rice | **Primeira escolha** | Simples, com CR na ordem de 2,5 a 3 |
