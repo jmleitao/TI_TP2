@@ -1,5 +1,3 @@
-Vou pesquisar a literatura para este levantamento, começando pelas revisões gerais e pela própria base de dados.
-
 # Estado da arte: compressão sem perdas de ECG
 
 ## Contexto da fonte
@@ -19,6 +17,7 @@ Quase todos os codecs têm dois estágios: um preditor que remove correlação t
 **2. Codecs de áudio sem perdas (FLAC, MPEG-4 ALS, APE, TTA, ALAC).** Foram comparados com LZMA, Deflate, PPMd, bzip2 e gzip noutros sinais de forma de onda. Para vocês, o mais relevante é que o **formato WFDB já suporta FLAC** (formatos 508, 516 e 524, com 8, 16 ou 24 bits por amostra), com o limite de oito sinais por ficheiro e a mesma frequência de amostragem em todos. O formato 516 é, portanto, um *baseline* simples e comparável. O MPEG-4 ALS usa o erro de predição de cada canal e subtrai-lhe uma combinação linear dos erros de um canal de referência, e já foi aplicado a sinais biomédicos.
 
 **3. Predição linear (fixa ou adaptativa) com Golomb-Rice ou Huffman.** É a família dominante.
+
 - Predição linear adaptativa com Golomb-Rice adaptativo ao conteúdo e empacotamento em tempo real atingiu 2,83× (V1) e 2,77× (V2) em 48 registos da MIT-BIH.
 - Um sistema de duplo modo (preditor de ordem 1 mais um preditor com *template* e de ordem 3, com modelação de erro por contexto) atingiu CR de 2,975 a 3,040 na MIT-BIH.
 - Uma predição adaptativa baseada no erro, com Golomb-Rice modificado, deu CR médio de 3,16, 3,75 e 3,52 nas bases PTB, European ST-T e MIT-BIH. As conclusões concordam com trabalhos anteriores em que a ordem 2 é adequada, o que bate com o que mediram.
@@ -35,7 +34,7 @@ Quase todos os codecs têm dois estágios: um preditor que remove correlação t
 ## Aplicabilidade à vossa fonte
 
 | Abordagem | Adequação | Porquê |
-|---|---|---|
+    |---|---|---|
 | gzip / bzip2 / LZMA | Só *baseline* | Dicionários e blocos têm pouco com que trabalhar em 5120 amostras por derivação |
 | FLAC (WFDB 516) | *Baseline* forte | Predição linear mais Rice, já suportado pelo WFDB |
 | LP fixa ou adaptativa + Golomb-Rice | **Primeira escolha** | Simples, com CR na ordem de 2,5 a 3 |
@@ -52,6 +51,7 @@ A entropia do erro de predição, de 5,0 a 5,4 bits/amostra, equivale a um CR te
 ## Referências a verificar antes de citar
 
 Confirmem autores, volumes e páginas nos originais, porque trabalhei com resumos:
+
 - Moody, Mark, Goldberger. *Evaluation of the "TRIM" ECG data compressor*. Computers in Cardiology, 15:167–170, 1988 (artigo original da base).
 - Revisão: *Lossless electrocardiogram signal compression: a review of existing methods*. Biomed. Signal Process. Control, 2019.
 - Tsai e Kuo et al. IEEE Access, vol. 6, pp. 42207–42215, 2018.
