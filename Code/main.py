@@ -271,6 +271,7 @@ def main():
     registos_dev = carregar_registos(pasta_dataset, nomes_dev)
 
     analise_dev(registos_dev)
+    executar_experiencias(registos_dev)
 
 if __name__ == "__main__":
     main()
